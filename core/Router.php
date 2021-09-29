@@ -31,7 +31,7 @@ class Router
         $callback = $this->routes[$method][$path] ?? false;
         if ($callback === false) {
             $this->response->setStatusCode(404);
-            return ' Not Found';
+            return $this->renderContent(' Not Found') ;
             exit;
         }
         //Warning: call_user_func() expects parameter 1 to be a valid callback, function 'users' not found or invalid function name in C:\Users\Darko\PhpstormProjects\MVCFramework\core\Router.php on line 32
@@ -47,6 +47,11 @@ class Router
         //return the layout content
         $layoutContent = $this->layoutContent();
         $viewContent = $this->renderOnlyView($view);
+        return str_replace('{{content}}', $viewContent, $layoutContent);
+    }
+    public function renderContent($viewContent)
+    {
+        $layoutContent = $this->layoutContent();
         return str_replace('{{content}}', $viewContent, $layoutContent);
     }
 
