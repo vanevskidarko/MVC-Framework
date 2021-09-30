@@ -23,6 +23,10 @@ class Router
     {
         $this->routes['get'][$path] = $callback;
     }
+    public function post($path, $callback)
+    {
+        $this->routes['post'][$path] = $callback;
+    }
 
     public function resolve()
     {
@@ -39,14 +43,17 @@ class Router
         if (is_string($callback)){
             return $this->renderView($callback);
         }
+        if (is_array($callback)){
+            $callback[0] = new $callback[0]();
+        }
         return call_user_func($callback);
     }
 
-    public function renderView($view)
+    public function renderView($view, $parameters= [])
     {
         //return the layout content
         $layoutContent = $this->layoutContent();
-        $viewContent = $this->renderOnlyView($view);
+        $viewContent = $this->renderOnlyView($view, $parameters);
         return str_replace('{{content}}', $viewContent, $layoutContent);
     }
     public function renderContent($viewContent)
@@ -61,8 +68,11 @@ class Router
         include_once Application::$ROOT_DIR."/views/layouts/main.php";
         return ob_get_clean();
     }
-    protected function renderOnlyView($view)
+    protected function renderOnlyView($view, $parameters)
     {
+        foreach ($parameters as $key => $value){
+            $$key = $value;
+        }
         ob_start();
         include_once Application::$ROOT_DIR."/views/$view.php";
         return ob_get_clean();

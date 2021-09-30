@@ -7,8 +7,10 @@ use app\core\Application;
 
 $app = new Application(dirname(__DIR__));
 
-$app->router->get('/', 'home');
-
+$app->router->get('/', [\app\controllers\SiteController::class , 'home']);
 $app->router->get('/users', 'users');
+$app->router->post('/users', [\app\controllers\SiteController::class, 'handle']);
+$app->router->get('/users', [\app\controllers\SiteController::class, 'handleGet']);
+
 
 $app->run();
